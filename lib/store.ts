@@ -5,11 +5,11 @@ import { randomUUID } from "crypto";
 import { CATEGORIES, DEFAULT_AVAILABILITY, slugify, type Availability, type Localized, type LocalizedList, type RequestStatus, type Service, type ServiceRequest } from "./catalog";
 import { isDate, isOpenSlot, isTime, slotKey } from "./dates";
 import { DEFAULT_SERVICES } from "./defaults";
+import { hasRedis, redis } from "./kv";
 
 export * from "./catalog";
 
 type Db = { services: Service[]; requests: ServiceRequest[]; availability: Availability };
-
 
 const str = (v: unknown, max = 2000) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
@@ -64,24 +64,11 @@ function withUniqueSlugs(services: Service[]) {
 // Storage: Upstash Redis when its env vars are set (Vercel, where the file system is read-only),
 // otherwise a JSON file in data/ (local development or a normal server).
 const DB_PATH = path.join(process.cwd(), "data", "db.json");
-const REDIS_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-const REDIS_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
 const REDIS_KEY = "pauls-home-repair:db";
 
-async function redis(command: string[]) {
-  const res = await fetch(REDIS_URL!, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${REDIS_TOKEN}` },
-    body: JSON.stringify(command),
-    cache: "no-store",
-  });
-  if (!res.ok) throw new Error(`Redis ${command[0]} failed: ${res.status}`);
-  return (await res.json()).result as string | null;
-}
-
 async function loadRaw(): Promise<Db | null> {
-  if (REDIS_URL && REDIS_TOKEN) {
-    const value = await redis(["GET", REDIS_KEY]);
+  if (hasRedis) {
+    const value = await redis<string | null>(["GET", REDIS_KEY]);
     return value ? (JSON.parse(value) as Db) : null;
   }
   try {
@@ -92,7 +79,7 @@ async function loadRaw(): Promise<Db | null> {
 }
 
 async function writeDb(db: Db) {
-  if (REDIS_URL && REDIS_TOKEN) {
+  if (hasRedis) {
     await redis(["SET", REDIS_KEY, JSON.stringify(db)]);
     return;
   }

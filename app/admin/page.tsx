@@ -4,12 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import Icon from "@/components/Icon";
 import { LogoFull, LogoMark } from "@/components/Logo";
 import Schedule from "@/components/admin/Schedule";
+import Chats from "@/components/admin/Chats";
 import AvailabilityEditor from "@/components/admin/AvailabilityEditor";
 import { CATEGORIES, STATUSES, type Category, type Lang, type RequestStatus, type Service, type ServiceRequest } from "@/lib/catalog";
 import { formatWhen } from "@/lib/dates";
 
 const TABS = [
   ["schedule", "Schedule"],
+  ["chats", "Chats"],
   ["requests", "Requests"],
   ["availability", "Availability"],
   ["services", "Services"],
@@ -53,6 +55,23 @@ function Login({ onDone }: { onDone: () => void }) {
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [tab, setTab] = useState<Tab>("schedule");
+  const [unread, setUnread] = useState(0);
+
+  // Unread chat count for the tab badge and the browser tab title.
+  useEffect(() => {
+    const check = () =>
+      fetch("/api/admin/chats", { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j) => j && setUnread(j.unread))
+        .catch(() => {});
+    check();
+    const timer = setInterval(check, 15000);
+    return () => clearInterval(timer);
+  }, [tab]);
+
+  useEffect(() => {
+    document.title = unread ? `(${unread}) Admin · Paul's Home Repair` : "Admin · Paul's Home Repair";
+  }, [unread]);
 
   async function logout() {
     await fetch("/api/admin", { method: "DELETE" });
@@ -66,7 +85,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           <a className="brand" href="/"><LogoMark size={34} /><span>Admin</span></a>
           <nav>
             {TABS.map(([id, label]) => (
-              <button key={id} className={tab === id ? "on" : ""} onClick={() => setTab(id)}>{label}</button>
+              <button key={id} className={tab === id ? "on" : ""} onClick={() => setTab(id)}>
+                {label}
+                {id === "chats" && unread > 0 && <span className="unread-dot static">{unread}</span>}
+              </button>
             ))}
           </nav>
           <button className="plain" onClick={logout}>Log out</button>
@@ -74,6 +96,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       </header>
       <main className="shell admin-main">
         {tab === "schedule" && <Schedule />}
+        {tab === "chats" && <Chats />}
         {tab === "requests" && <Requests />}
         {tab === "availability" && <AvailabilityEditor />}
         {tab === "services" && <Services />}

@@ -18,6 +18,14 @@ export default function TabBar() {
   const pathname = usePathname();
   const router = useRouter();
   const [section, setSection] = useState("home");
+  const [unread, setUnread] = useState(0);
+
+  // Badge for new replies from Paul (sent by ChatBot).
+  useEffect(() => {
+    const onUnread = (e: Event) => setUnread((e as CustomEvent<number>).detail);
+    window.addEventListener("chat-unread", onUnread);
+    return () => window.removeEventListener("chat-unread", onUnread);
+  }, []);
 
   // On the home page, highlight Home or Services depending on scroll position.
   useEffect(() => {
@@ -54,7 +62,7 @@ export default function TabBar() {
         </button>
       ))}
       <button onClick={() => window.dispatchEvent(new Event("open-chat"))}>
-        <Icon name="chat" size={22} />
+        <span className="tab-icon"><Icon name="chat" size={22} />{unread > 0 && <i className="unread-dot">{unread}</i>}</span>
         <span>{t.tabs.chat}</span>
       </button>
       <a href={PHONE_HREF} className="tab-call">
