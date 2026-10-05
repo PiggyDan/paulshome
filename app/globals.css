@@ -463,7 +463,29 @@ footer { background: #090d10; color: rgba(255,255,255,.5); font-size: 13px; }
 .visit-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 .button.small { min-height: 38px; padding: 0 14px; font-size: 14px; border-radius: 10px; }
 .button.danger:hover { border-color: var(--err); color: var(--err); }
-.avail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 22px; }
+.avail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
+.avail-card.wide { grid-column: 1 / -1; }
+.avail-cal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.avail-cal-head .cal-head { gap: 14px; margin: 0; }
+.avail-cal-head .cal-head strong { min-width: 130px; text-align: center; }
+.admin-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.acal-day { position: relative; min-height: 78px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 8px 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); text-align: left; transition: border-color .15s, background .15s, transform .1s; }
+.acal-day.open:hover { border-color: var(--accent); }
+.acal-day.open:active, .acal-day.off:active { transform: scale(.97); }
+.acal-num { font-weight: 700; font-size: 15px; }
+.acal-day.today .acal-num { color: var(--accent-text); }
+.acal-day.today { box-shadow: inset 0 0 0 2px var(--accent); }
+.acal-day.beyond { opacity: .55; }
+.acal-day.off { background: repeating-linear-gradient(135deg, rgba(239,68,68,.10) 0 8px, rgba(239,68,68,.04) 8px 16px); border-color: rgba(239,68,68,.5); }
+.acal-day.closed { background: var(--soft); color: var(--muted); cursor: default; }
+.acal-day.past { background: none; border-style: dashed; color: var(--muted); opacity: .45; cursor: default; }
+.acal-tag { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.acal-day.off .acal-tag { color: #ef4444; }
+.acal-count { margin-top: auto; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-text); font-size: 11px; font-weight: 700; }
+.lg.off { background: rgba(239,68,68,.25); box-shadow: inset 0 0 0 1px rgba(239,68,68,.6); }
+.lg.visits { background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); border-radius: 999px; }
+.day-toggles button:disabled { opacity: .45; cursor: not-allowed; text-decoration: line-through; }
+.save-bar { justify-content: flex-end; gap: 16px; }
 .avail-card { display: grid; gap: 12px; align-content: start; padding: 20px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; }
 .avail-card h3 { margin: 0; font-size: 17px; }
 .day-toggles { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
@@ -480,6 +502,8 @@ footer { background: #090d10; color: rgba(255,255,255,.5); font-size: 13px; }
 
 @media (max-width: 960px) {
   .avail-grid { grid-template-columns: 1fr; }
+  .acal-day { min-height: 58px; padding: 6px; }
+  .acal-count { font-size: 10px; padding: 1px 5px; }
   .visit { grid-template-columns: 60px 1fr; }
   .visit-actions { grid-column: 1 / -1; justify-content: flex-start; }
 }
@@ -650,3 +674,18 @@ footer { background: #090d10; color: rgba(255,255,255,.5); font-size: 13px; }
 }
 @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } }
 
+
+@media (max-width: 620px) {
+  .admin-cal { gap: 3px; }
+  .acal-day { min-height: 50px; padding: 5px; border-radius: 9px; }
+  .acal-tag { display: none; }
+  .acal-count { font-size: 0; padding: 0; width: 8px; height: 8px; background: var(--accent); }
+}
+
+/* Admin header on phones: tabs scroll sideways on their own row */
+@media (max-width: 760px) {
+  .admin-top .shell { flex-wrap: wrap; row-gap: 0; padding-top: 6px; }
+  .admin-top nav { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; padding-bottom: 8px; margin: 0 -4px; }
+  .admin-top nav::-webkit-scrollbar { display: none; }
+  .admin-top nav button { white-space: nowrap; flex: none; }
+}

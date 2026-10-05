@@ -137,13 +137,16 @@ export async function saveServices(services: Service[]) {
   return db.services;
 }
 
+const SUNDAY = 0;
+
 export function normalizeAvailability(raw: unknown): Availability {
   const o = (raw ?? {}) as Partial<Record<keyof Availability, unknown>>;
   const nums = (v: unknown) => (Array.isArray(v) ? v.filter((n): n is number => Number.isInteger(n) && n >= 0 && n <= 6) : null);
   const int = (v: unknown, min: number, max: number, fallback: number) =>
     typeof v === "number" && Number.isFinite(v) ? Math.min(max, Math.max(min, Math.round(v))) : fallback;
   return {
-    workDays: Array.from(new Set(nums(o.workDays) ?? DEFAULT_AVAILABILITY.workDays)).sort(),
+    // Sunday (0) is always a day off.
+    workDays: Array.from(new Set(nums(o.workDays) ?? DEFAULT_AVAILABILITY.workDays)).filter((d) => d !== SUNDAY).sort(),
     slots: Array.isArray(o.slots) ? Array.from(new Set(o.slots.filter(isTime))).sort() : DEFAULT_AVAILABILITY.slots,
     blockedDates: Array.isArray(o.blockedDates) ? Array.from(new Set(o.blockedDates.filter(isDate))).sort() : [],
     leadDays: int(o.leadDays, 0, 30, DEFAULT_AVAILABILITY.leadDays),
