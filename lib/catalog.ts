@@ -47,7 +47,7 @@ export const DEFAULT_AVAILABILITY: Availability = {
   workDays: [1, 2, 3, 4, 5, 6],
   slots: ["09:00", "11:00", "14:00", "16:00"],
   blockedDates: [],
-  leadDays: 1,
+  leadDays: 2,
   horizonDays: 60,
 };
 
