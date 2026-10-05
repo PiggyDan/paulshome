@@ -41,8 +41,18 @@ export function isOpenDay(date: string, a: Availability, today = ubToday()) {
   );
 }
 
+/** Current time in Ulaanbaatar as "HH:MM". */
+export function ubNowTime(): string {
+  return new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Ulaanbaatar", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date());
+}
+
+/** A slot today whose start time has already passed (matters when same-day booking is allowed). */
+export function isPastSlot(date: string, time: string, today = ubToday(), now = ubNowTime()) {
+  return date < today || (date === today && time <= now);
+}
+
 export function isOpenSlot(date: string, time: string, a: Availability, taken: Set<string>, today = ubToday()) {
-  return isOpenDay(date, a, today) && a.slots.includes(time) && !taken.has(slotKey(date, time));
+  return isOpenDay(date, a, today) && a.slots.includes(time) && !taken.has(slotKey(date, time)) && !isPastSlot(date, time, today);
 }
 
 const MONTHS: Record<Lang, string[]> = {

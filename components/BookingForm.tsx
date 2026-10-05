@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Icon from "./Icon";
 import { useLang } from "./Prefs";
 import type { Availability } from "@/lib/catalog";
-import { addDays, dayShort, formatDate, formatWhen, icsFor, isOpenDay, monthName, slotKey, weekday } from "@/lib/dates";
+import { addDays, dayShort, formatDate, formatWhen, icsFor, isOpenDay, isPastSlot, monthName, slotKey, weekday } from "@/lib/dates";
 
 type Data = { availability: Availability; taken: Set<string>; today: string };
 type Booked = { id: string; date: string; time: string; service: string };
@@ -52,7 +52,7 @@ export default function BookingForm({ serviceTitles = [], defaultService = "" }:
   }, [load]);
 
   const freeSlots = useCallback(
-    (d: string) => (data ? data.availability.slots.filter((s) => !data.taken.has(slotKey(d, s))) : []),
+    (d: string) => (data ? data.availability.slots.filter((s) => !data.taken.has(slotKey(d, s)) && !isPastSlot(d, s, data.today)) : []),
     [data]
   );
 
@@ -184,7 +184,7 @@ export default function BookingForm({ serviceTitles = [], defaultService = "" }:
         ) : (
           <div className="slots">
             {data!.availability.slots.map((s) => {
-              const taken = data!.taken.has(slotKey(date, s));
+              const taken = data!.taken.has(slotKey(date, s)) || isPastSlot(date, s, data!.today);
               return (
                 <button type="button" key={s} className={`slot${time === s ? " on" : ""}`} disabled={taken} aria-pressed={time === s}
                   onClick={() => { setTime(s); setState("idle"); }}>
