@@ -199,8 +199,8 @@ textarea { resize: vertical; }
 
 footer { background: #090d10; color: rgba(255,255,255,.5); font-size: 13px; }
 .footer-content { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-.footer-admin { opacity: .6; }
-.footer-admin:hover { opacity: 1; color: #fff; }
+.footer-credit { opacity: .6; }
+.footer-credit:hover { opacity: 1; color: #fff; }
 
 /* ---------- Chatbot ---------- */
 .chat-fab { position: fixed; right: 22px; bottom: 22px; z-index: 50; display: flex; align-items: center; gap: 10px; padding: 14px 20px 14px 16px; border: 0; border-radius: 999px; background: var(--accent); color: #fff; font-weight: 700; box-shadow: 0 14px 30px -10px rgba(240,122,26,.7); transition: transform .2s, opacity .2s; }

@@ -113,7 +113,7 @@ const en = {
     howTitle: "How it works",
     related: "More in {category}",
   },
-  footer: { location: "Ulaanbaatar, Mongolia", admin: "Admin" },
+  footer: { location: "Ulaanbaatar, Mongolia" },
   tabs: { home: "Home", services: "Services", quote: "Book", chat: "Chat", call: "Call" },
   install: { title: "Get the app", android: "Add Paul's Home Repair to your home screen", ios: "Tap Share, then Add to Home Screen", button: "Install", dismiss: "Dismiss" },
   chat: {
@@ -269,7 +269,7 @@ const mn: Dict = {
     howTitle: "Хэрхэн ажилладаг",
     related: "{category}: бусад үйлчилгээ",
   },
-  footer: { location: "Улаанбаатар, Монгол", admin: "Админ" },
+  footer: { location: "Улаанбаатар, Монгол" },
   tabs: { home: "Нүүр", services: "Үйлчилгээ", quote: "Захиалга", chat: "Чат", call: "Залгах" },
   install: { title: "Аппыг суулгах", android: "Paul's Home Repair-ийг нүүр дэлгэцэндээ нэмээрэй", ios: "Share → Add to Home Screen дарна уу", button: "Суулгах", dismiss: "Хаах" },
   chat: {

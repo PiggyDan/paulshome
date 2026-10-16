@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Nav from "./Nav";
 import ChatBot from "./ChatBot";
 import InstallPrompt from "./InstallPrompt";
@@ -25,7 +24,7 @@ export default async function SiteChrome({ children }: { children: React.ReactNo
         <div className="shell footer-content">
           <p>© {new Date().getFullYear()} Paul&apos;s Home Repair · {t.footer.location}</p>
           <p>{CATEGORIES.map((c) => loc(c.label, lang)).join(" · ")}</p>
-          <Link href="/admin" className="footer-admin">{t.footer.admin}</Link>
+          <a href="https://daniel70.netlify.app" target="_blank" rel="noopener noreferrer" className="footer-credit">Powered by Daniel Knight</a>
         </div>
       </footer>
       <ChatBot serviceTitles={titles} />
