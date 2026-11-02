@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Cormorant_Garamond, Manrope } from "next/font/google";
 import { PrefsProvider } from "@/components/Prefs";
+import MotionProvider from "@/components/motion/MotionProvider";
 import { getLang, getTheme } from "@/lib/prefs";
 import "./globals.css";
 
 // cyrillic-ext carries the Mongolian letters Ө and Ү.
-const inter = Inter({ subsets: ["latin", "cyrillic", "cyrillic-ext"], display: "swap" });
+const sans = Manrope({ subsets: ["latin", "cyrillic", "cyrillic-ext"], display: "swap", variable: "--font-sans" });
+const display = Cormorant_Garamond({ subsets: ["latin", "cyrillic", "cyrillic-ext"], weight: ["400", "500", "600"], style: ["normal", "italic"], display: "swap", variable: "--font-display" });
 
 export const metadata: Metadata = {
   title: "Paul's Home Repair | Ulaanbaatar",
@@ -17,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0e1317",
+  themeColor: "#1c1b19",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -26,9 +28,11 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const lang = getLang();
   return (
-    <html lang={lang} data-theme={getTheme()}>
-      <body className={inter.className}>
-        <PrefsProvider lang={lang}>{children}</PrefsProvider>
+    <html lang={lang} data-theme={getTheme()} className={`${sans.variable} ${display.variable}`}>
+      <body>
+        <PrefsProvider lang={lang}>
+          <MotionProvider>{children}</MotionProvider>
+        </PrefsProvider>
       </body>
     </html>
   );

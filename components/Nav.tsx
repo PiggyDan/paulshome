@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { AnimatePresence, motion } from "motion/react";
 import { LogoLockup } from "./Logo";
 import { LangSwitch, ThemeToggle, useLang } from "./Prefs";
 import { PHONE, PHONE_HREF } from "@/lib/i18n";
+
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 export default function Nav() {
   const { t } = useLang();
@@ -29,14 +32,19 @@ export default function Nav() {
   ];
 
   return (
-    <header className={`nav-wrap${scrolled ? " scrolled" : ""}`}>
+    <motion.header
+      className={`nav-wrap${scrolled ? " scrolled" : ""}${open ? " menu-open" : ""}`}
+      initial={{ opacity: 0, y: -16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: EASE }}
+    >
       <nav className="nav shell" aria-label="Main navigation">
         <Link className="brand" href="/" aria-label="Paul's Home Repair">
           <LogoLockup />
         </Link>
-        <div className={`nav-links${open ? " open" : ""}`} onClick={() => setOpen(false)}>
+        <div className="nav-links">
           {links.map(([href, label]) => (
-            <Link key={href} href={href}>{label}</Link>
+            <Link key={href} href={href} className="nav-link">{label}</Link>
           ))}
           <a href={PHONE_HREF} className="nav-cta">{PHONE}</a>
         </div>
@@ -48,6 +56,32 @@ export default function Nav() {
           <span /><span />
         </button>
       </nav>
-    </header>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="nav-sheet"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}
+            transition={{ duration: 0.35, ease: EASE }}
+            onClick={() => setOpen(false)}
+          >
+            {[...links, [PHONE_HREF, PHONE]].map(([href, label], i) => (
+              <motion.a
+                key={href}
+                href={href}
+                className={href === PHONE_HREF ? "nav-cta" : ""}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.04 * i, ease: EASE }}
+              >
+                {label}
+              </motion.a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
   );
 }
